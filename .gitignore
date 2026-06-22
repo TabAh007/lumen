@@ -9,3 +9,5 @@ backend/uploads/
 __pycache__/
 *.pyc
 maigret-venv/
+
+frontend/dist/
