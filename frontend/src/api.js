@@ -8,3 +8,5 @@ export const collect = (platform, handle) =>
   api.post('/collect', { platform, handle }).then((r) => r.data);
 export const analyze = (handle, profile, posts) =>
   api.post('/analyze', { handle, profile, posts }).then((r) => r.data);
+export const emailLookup = (email) =>
+  api.post('/email-lookup', { email }).then((r) => r.data);

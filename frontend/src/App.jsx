@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Search, Loader2, ShieldAlert, ExternalLink, Sparkles } from 'lucide-react';
+import { Search, Loader2, ShieldAlert, ExternalLink, Sparkles, AtSign, Mail } from 'lucide-react';
 import * as api from './api';
 import StanceCard from './components/StanceCard';
+import EmailLookup from './components/EmailLookup';
 
 const STEP = { IDLE: 'idle', DISCOVER: 'discover', COLLECT: 'collect', ANALYZE: 'analyze' };
 
 export default function App() {
+  const [mode, setMode] = useState('handle'); // 'handle' | 'email'
   const [handle, setHandle] = useState('');
   const [busy, setBusy] = useState(null); // which step is running
   const [error, setError] = useState(null);
@@ -71,6 +73,30 @@ export default function App() {
           </div>
         </div>
 
+        {/* Mode toggle */}
+        <div className="mb-4 inline-flex rounded-lg border border-white/10 bg-white/5 p-1">
+          <button
+            onClick={() => setMode('handle')}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition ${
+              mode === 'handle' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <AtSign className="h-3.5 w-3.5" /> By handle
+          </button>
+          <button
+            onClick={() => setMode('email')}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition ${
+              mode === 'email' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Mail className="h-3.5 w-3.5" /> By email
+          </button>
+        </div>
+
+        {mode === 'email' && <EmailLookup />}
+
+        {mode === 'handle' && (
+        <>
         {/* Search */}
         <form onSubmit={runDiscover} className="flex gap-2">
           <div className="relative flex-1">
@@ -216,6 +242,8 @@ export default function App() {
               Analysis by {analysis.model} · public data only · verify evidence before acting
             </p>
           </section>
+        )}
+        </>
         )}
       </div>
     </div>

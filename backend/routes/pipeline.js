@@ -4,6 +4,7 @@ const router = express.Router();
 const maigret = require('../services/maigret');
 const apify = require('../services/apify');
 const analysis = require('../services/analysis');
+const holehe = require('../services/holehe');
 
 // Step 1: discover where a handle exists online
 router.post('/discover', async (req, res, next) => {
@@ -37,6 +38,17 @@ router.post('/analyze', async (req, res, next) => {
       return res.status(400).json({ error: 'posts (array) is required' });
     }
     res.json(await analysis.analyze({ handle, profile, posts }));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Email lookup: which platforms have an account registered to this email (Holehe)
+router.post('/email-lookup', async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'email is required' });
+    res.json(await holehe.lookup(email.trim()));
   } catch (err) {
     next(err);
   }

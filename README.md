@@ -18,8 +18,8 @@ Every stance is shown with **quoted evidence + a confidence score** — never a 
 # 1. Backend deps
 cd backend && npm install
 
-# 2. Maigret (discovery) in an isolated venv
-cd .. && python3 -m venv maigret-venv && ./maigret-venv/bin/pip install maigret
+# 2. Python OSINT tools (discovery + email lookup) in an isolated venv
+cd .. && python3 -m venv maigret-venv && ./maigret-venv/bin/pip install maigret holehe
 
 # 3. Frontend deps
 cd frontend && npm install
@@ -52,6 +52,7 @@ Open http://localhost:5173 and search a handle (try `natgeo`).
 - `POST /api/discover` `{ handle }` → platforms found (Maigret)
 - `POST /api/collect` `{ platform, handle }` → normalized profile + posts (Apify)
 - `POST /api/analyze` `{ handle, profile, posts }` → interests + evidence-backed stances (Claude)
+- `POST /api/email-lookup` `{ email }` → which platforms have an account registered to this email (Holehe)
 
 ## Notes
 - **Public data only.** Designed for authorized security/threat-intel use. Mind GDPR/CCPA on retention.
