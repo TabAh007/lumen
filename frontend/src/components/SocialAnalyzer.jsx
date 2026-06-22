@@ -8,7 +8,6 @@ function rateColor(rate) {
   return 'text-slate-400';
 }
 
-// Short, human label for the (sometimes long) category strings.
 function shortCategory(cat) {
   if (!cat) return null;
   const parts = cat.split('>').map((s) => s.trim());
@@ -41,66 +40,69 @@ export default function SocialAnalyzer() {
     <div>
       <form onSubmit={run} className="flex gap-2">
         <div className="relative flex-1">
-          <Radar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Radar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" />
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter a username, e.g. natgeo"
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2.5 pl-10 pr-3 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-400/50 focus:ring-1 focus:ring-indigo-400/30"
+            placeholder="TARGET USERNAME — e.g. natgeo"
+            className="w-full border border-white/10 bg-black/30 py-3 pl-10 pr-3 font-mono text-sm text-white placeholder-slate-600 outline-none transition focus:border-accent/60"
           />
         </div>
         <button
           type="submit"
           disabled={busy}
-          className="flex items-center gap-2 rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50"
+          className="flex items-center gap-2 border border-accent/40 bg-accent/15 px-5 font-mono text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-accent/25 disabled:opacity-40"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Analyse'}
         </button>
       </form>
 
-      <p className="mt-2 text-xs text-slate-500">
+      <p className="mt-2 font-mono text-xs text-slate-500">
         High-precision profile detection with a confidence rate and a site category for each hit.
       </p>
 
       {error && (
-        <div className="mt-5 flex items-start gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
+        <div className="mt-5 flex items-start gap-2 border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
           <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {busy && (
-        <div className="mt-8 flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-          <Loader2 className="h-4 w-4 animate-spin text-indigo-300" />
-          Detecting profiles and rating confidence…
+        <div className="mt-8 flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
+          <Loader2 className="h-4 w-4 animate-spin text-accent" />
+          DETECTING PROFILES AND RATING CONFIDENCE…
         </div>
       )}
 
       {result && (
         <section className="mt-8">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-slate-500">
-            {result.count} profiles detected
-          </h2>
-          <p className="mt-1 text-xs text-slate-500">Sorted by detection confidence.</p>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent/80">DETECTED</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">
+              {result.count} profiles · sorted by confidence
+            </span>
+            <span className="h-px flex-1 bg-white/10" />
+          </div>
 
-          <div className="mt-3 space-y-2">
+          <div className="mt-4 space-y-px bg-white/5">
             {result.profiles.map((p, i) => {
               const cat = shortCategory(p.category);
               const adult = /adult/i.test(p.category || '');
               return (
                 <div
                   key={i}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3"
+                  className="flex items-center justify-between gap-3 bg-ink-950 p-3"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-white">{p.platform}</span>
                       {cat && (
                         <span
-                          className={`rounded border px-1.5 py-0.5 text-xs ${
+                          className={`border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
                             adult
                               ? 'border-rose-500/30 bg-rose-500/10 text-rose-300'
-                              : 'border-white/10 bg-white/5 text-slate-400'
+                              : 'border-white/10 bg-white/[0.03] text-slate-400'
                           }`}
                         >
                           {cat}
@@ -111,13 +113,13 @@ export default function SocialAnalyzer() {
                       href={p.link}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-0.5 flex items-center gap-1 truncate text-xs text-indigo-300 hover:text-indigo-200 hover:underline"
+                      className="mt-0.5 flex items-center gap-1 truncate font-mono text-[11px] text-accent hover:underline"
                     >
                       {p.link} <ExternalLink className="h-3 w-3 shrink-0" />
                     </a>
                   </div>
                   {p.rate != null && (
-                    <span className={`shrink-0 text-sm font-semibold tabular-nums ${rateColor(p.rate)}`}>
+                    <span className={`shrink-0 font-mono text-sm font-semibold tabular-nums ${rateColor(p.rate)}`}>
                       {p.rate}%
                     </span>
                   )}
@@ -125,7 +127,7 @@ export default function SocialAnalyzer() {
               );
             })}
           </div>
-          <p className="pt-6 text-center text-xs text-slate-600">
+          <p className="border-t border-white/5 pt-4 mt-6 text-center font-mono text-[10px] uppercase tracking-wider text-slate-600">
             Detection confidence is heuristic · verify before acting
           </p>
         </section>

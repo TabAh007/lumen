@@ -9,6 +9,52 @@
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: #0b1020;
-  color: #e6e9f0;
+  color: #e7e9ec;
+  background-color: #07080a;
+  /* Subtle command-console data grid + cool top glow */
+  background-image:
+    radial-gradient(900px 400px at 50% -8%, rgba(77, 124, 254, 0.10), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 100% 100%, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+}
+
+@layer components {
+  /* Uppercase, letter-spaced section/eyebrow labels */
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500;
+  }
+
+  /* Bordered surface panel with a faint inner sheen */
+  .panel {
+    @apply border border-white/10 bg-white/[0.02];
+  }
+
+  /* Decorative corner ticks for the "instrument" feel */
+  .ticked {
+    position: relative;
+  }
+  .ticked::before,
+  .ticked::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-color: rgba(77, 124, 254, 0.55);
+    border-style: solid;
+    border-width: 0;
+  }
+  .ticked::before {
+    top: -1px;
+    left: -1px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+  .ticked::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+  }
 }
