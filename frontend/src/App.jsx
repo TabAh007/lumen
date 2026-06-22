@@ -4,6 +4,7 @@ import * as api from './api';
 import StanceCard from './components/StanceCard';
 import EmailLookup from './components/EmailLookup';
 import SocialAnalyzer from './components/SocialAnalyzer';
+import Home from './components/Home';
 
 const STEP = { IDLE: 'idle', DISCOVER: 'discover', COLLECT: 'collect', ANALYZE: 'analyze' };
 
@@ -18,6 +19,7 @@ function Eyebrow({ index, children }) {
 }
 
 export default function App() {
+  const [view, setView] = useState('home'); // 'home' | 'console'
   const [mode, setMode] = useState('handle'); // 'handle' | 'email' | 'social'
   const [handle, setHandle] = useState('');
   const [busy, setBusy] = useState(null); // which step is running
@@ -79,12 +81,16 @@ export default function App() {
     { id: 'social', label: 'Social Analyser', icon: Radar },
   ];
 
+  if (view === 'home') {
+    return <Home onLaunch={() => setView('console')} />;
+  }
+
   return (
     <div className="min-h-screen">
       {/* Top console bar */}
       <header className="border-b border-white/10 bg-black/30 backdrop-blur-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
+          <button onClick={() => setView('home')} className="flex items-center gap-3 text-left">
             <div className="ticked flex h-9 w-9 items-center justify-center border border-accent/40 bg-accent/10">
               <Hexagon className="h-4 w-4 text-accent" />
             </div>
@@ -92,7 +98,7 @@ export default function App() {
               <div className="font-mono text-sm font-bold tracking-[0.3em] text-white">LUMEN</div>
               <div className="eyebrow">Social Intelligence Console</div>
             </div>
-          </div>
+          </button>
           <div className="hidden items-center gap-2 sm:flex">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
             <span className="eyebrow text-slate-500">System Online</span>
