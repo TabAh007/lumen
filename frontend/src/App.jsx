@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Loader2, ShieldAlert, ExternalLink, Sparkles, AtSign, Mail } from 'lucide-react';
+import { Search, Loader2, ShieldAlert, ExternalLink, Sparkles, AtSign, Mail, Radar } from 'lucide-react';
 import * as api from './api';
 import StanceCard from './components/StanceCard';
 import EmailLookup from './components/EmailLookup';
+import SocialAnalyzer from './components/SocialAnalyzer';
 
 const STEP = { IDLE: 'idle', DISCOVER: 'discover', COLLECT: 'collect', ANALYZE: 'analyze' };
 
@@ -91,9 +92,18 @@ export default function App() {
           >
             <Mail className="h-3.5 w-3.5" /> By email
           </button>
+          <button
+            onClick={() => setMode('social')}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition ${
+              mode === 'social' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Radar className="h-3.5 w-3.5" /> Social Analyser
+          </button>
         </div>
 
         {mode === 'email' && <EmailLookup />}
+        {mode === 'social' && <SocialAnalyzer />}
 
         {mode === 'handle' && (
         <>

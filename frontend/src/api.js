@@ -10,3 +10,5 @@ export const analyze = (handle, profile, posts) =>
   api.post('/analyze', { handle, profile, posts }).then((r) => r.data);
 export const emailLookup = (email) =>
   api.post('/email-lookup', { email }).then((r) => r.data);
+export const socialAnalyze = (username) =>
+  api.post('/social-analyze', { username }).then((r) => r.data);

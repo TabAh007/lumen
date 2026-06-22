@@ -5,6 +5,7 @@ const maigret = require('../services/maigret');
 const apify = require('../services/apify');
 const analysis = require('../services/analysis');
 const holehe = require('../services/holehe');
+const socialAnalyzer = require('../services/socialAnalyzer');
 
 // Step 1: discover where a handle exists online
 router.post('/discover', async (req, res, next) => {
@@ -49,6 +50,17 @@ router.post('/email-lookup', async (req, res, next) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'email is required' });
     res.json(await holehe.lookup(email.trim()));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Social Analyser: username -> detected profiles with confidence + category
+router.post('/social-analyze', async (req, res, next) => {
+  try {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ error: 'username is required' });
+    res.json(await socialAnalyzer.analyze(username.trim().replace(/^@/, '')));
   } catch (err) {
     next(err);
   }
