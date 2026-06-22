@@ -9,6 +9,7 @@
     "dev": "node --watch server.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
     "apify-client": "^2.9.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

@@ -32,11 +32,11 @@ router.post('/collect', async (req, res, next) => {
 // Step 3: analyze collected content for interests + stances
 router.post('/analyze', async (req, res, next) => {
   try {
-    const { handle, posts } = req.body;
+    const { handle, profile, posts } = req.body;
     if (!Array.isArray(posts)) {
       return res.status(400).json({ error: 'posts (array) is required' });
     }
-    res.json(await analysis.analyze({ handle, posts }));
+    res.json(await analysis.analyze({ handle, profile, posts }));
   } catch (err) {
     next(err);
   }
