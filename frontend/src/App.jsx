@@ -8,9 +8,10 @@ import SocialAnalyzer from './components/SocialAnalyzer';
 const STEP = { IDLE: 'idle', DISCOVER: 'discover', COLLECT: 'collect', ANALYZE: 'analyze' };
 
 export default function App() {
-  const [mode, setMode] = useState('handle'); // 'handle' | 'email'
+  const [mode, setMode] = useState('handle'); // 'handle' | 'email' | 'social'
   const [handle, setHandle] = useState('');
   const [busy, setBusy] = useState(null); // which step is running
+  const [activePlatform, setActivePlatform] = useState(null); // platform being analyzed
   const [error, setError] = useState(null);
   const [discovery, setDiscovery] = useState(null);
   const [collected, setCollected] = useState(null);
@@ -43,6 +44,7 @@ export default function App() {
     setError(null);
     setCollected(null);
     setAnalysis(null);
+    setActivePlatform(platform);
     setBusy(STEP.COLLECT);
     try {
       const c = await api.collect(platform, h);
@@ -57,6 +59,7 @@ export default function App() {
       setError(err.response?.data?.error || err.message);
     } finally {
       setBusy(null);
+      setActivePlatform(null);
     }
   }
 
@@ -137,42 +140,49 @@ export default function App() {
         {/* Discovery results */}
         {discovery && (
           <section className="mt-8">
+            {/* Explicit analyze actions — both platforms, always available */}
             <h2 className="text-sm font-medium uppercase tracking-wide text-slate-500">
-              Found on {discovery.count} platforms
+              Analyze content on
             </h2>
             <p className="mt-1 text-xs text-slate-500">
-              Select Instagram or TikTok to pull posts and run analysis.
+              Pull posts from {handle.trim().replace(/^@/, '') || 'this handle'} and run interest & stance analysis.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {discovery.sites.map((s) => {
-                const analyzable = /instagram|tiktok/i.test(s.platform);
-                return (
-                  <div
-                    key={s.platform + s.url}
-                    className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${
-                      analyzable
-                        ? 'border-indigo-400/30 bg-indigo-500/10 text-indigo-100'
-                        : 'border-white/10 bg-white/5 text-slate-300'
-                    }`}
-                  >
-                    <span>{s.platform}</span>
-                    {s.url && (
-                      <a href={s.url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {analyzable && (
-                      <button
-                        onClick={() => runAnalyze(s.platform)}
-                        disabled={!!busy}
-                        className="ml-1 rounded bg-indigo-500 px-2 py-0.5 text-xs font-medium text-white hover:bg-indigo-400 disabled:opacity-50"
-                      >
-                        Analyze
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+              {['Instagram', 'TikTok'].map((platform) => (
+                <button
+                  key={platform}
+                  onClick={() => runAnalyze(platform)}
+                  disabled={!!busy}
+                  className="flex items-center gap-2 rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-100 transition hover:bg-indigo-500/20 disabled:opacity-50"
+                >
+                  {busy && activePlatform === platform ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  Analyze {platform}
+                </button>
+              ))}
+            </div>
+
+            {/* Discovered footprint (reference) */}
+            <h2 className="mt-8 text-sm font-medium uppercase tracking-wide text-slate-500">
+              Found on {discovery.count} platforms
+            </h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {discovery.sites.map((s) => (
+                <div
+                  key={s.platform + s.url}
+                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300"
+                >
+                  <span>{s.platform}</span>
+                  {s.url && (
+                    <a href={s.url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white">
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
         )}
