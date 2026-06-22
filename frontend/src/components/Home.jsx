@@ -9,6 +9,7 @@ import {
   Search,
   ScanLine,
   FileText,
+  Lock,
 } from 'lucide-react';
 
 const CAPABILITIES = [
@@ -132,6 +133,17 @@ export default function Home({ onLaunch }) {
                 </div>
               );
             })}
+          </div>
+
+          {/* Public-profile limitation */}
+          <div className="mt-6 flex items-start gap-3 border border-amber-500/25 bg-amber-500/[0.06] p-4">
+            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <p className="text-sm leading-relaxed text-slate-300">
+              <span className="font-semibold text-white">Public profiles only.</span> Handle analysis
+              reads posts that are publicly visible. If an account is <span className="text-white">private</span>,
+              its posts can&apos;t be retrieved, so interest &amp; stance analysis won&apos;t be available for
+              that account — the discovery footprint and the Email and Social Analyser modes still work.
+            </p>
           </div>
         </section>
 
