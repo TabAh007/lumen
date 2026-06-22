@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Loader2, ShieldAlert, ExternalLink, AtSign, Mail, Radar, Hexagon } from 'lucide-react';
+import { Search, Loader2, ShieldAlert, ExternalLink, AtSign, Mail, Radar, Hexagon, Lock } from 'lucide-react';
 import * as api from './api';
 import StanceCard from './components/StanceCard';
 import EmailLookup from './components/EmailLookup';
@@ -153,6 +153,11 @@ export default function App() {
                   {busy === STEP.DISCOVER ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
                 </button>
               </form>
+
+              <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-slate-500">
+                <Lock className="h-3 w-3 text-amber-400/80" />
+                Public profiles only — private accounts can&apos;t be pulled for analysis.
+              </p>
 
               {error && (
                 <div className="mt-5 flex items-start gap-2 border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
