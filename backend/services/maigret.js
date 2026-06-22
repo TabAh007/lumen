@@ -61,38 +61,53 @@ function runMaigret(handle, outDir, topSites, timeout) {
   });
 }
 
+function baseDomain(url) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    const parts = host.split('.');
+    return parts.length > 2 ? parts.slice(-2).join('.') : host;
+  } catch {
+    return null;
+  }
+}
+
 function normalize(handle, raw) {
-  const sites = [];
-  const tagCounts = {};
+  const candidates = [];
 
   for (const [name, entry] of Object.entries(raw)) {
     if (NOISE_SITES.has(name)) continue;
     const status = entry.status || {};
     if (status.status !== 'Claimed') continue;
+    if (entry.is_similar) continue; // drop guessed/similar matches (main false-positive source)
 
     const ids = status.ids || {};
-    const tags = (entry.site && entry.site.tags) || [];
-    tags.forEach((t) => (tagCounts[t] = (tagCounts[t] || 0) + 1));
-
-    sites.push({
+    candidates.push({
       platform: name,
       url: entry.url_user || status.url || null,
-      isSimilar: Boolean(entry.is_similar),
       rank: entry.rank ?? null,
       extracted: {
         fullname: ids.fullname || null,
         bio: ids.description || null,
         image: ids.image || null,
       },
-      tags,
+      tags: (entry.site && entry.site.tags) || [],
     });
   }
 
-  // Sort: exact matches first, then by site rank (lower = more popular).
-  sites.sort((a, b) => {
-    if (a.isSimilar !== b.isSimilar) return a.isSimilar ? 1 : -1;
-    return (a.rank ?? 1e9) - (b.rank ?? 1e9);
-  });
+  // Sort by site rank (lower = more popular), then dedupe by base domain so
+  // multi-region variants (e.g. the OP.GG regionals) collapse to one entry.
+  candidates.sort((a, b) => (a.rank ?? 1e9) - (b.rank ?? 1e9));
+
+  const seen = new Set();
+  const sites = [];
+  const tagCounts = {};
+  for (const c of candidates) {
+    const dom = baseDomain(c.url);
+    if (dom && seen.has(dom)) continue;
+    if (dom) seen.add(dom);
+    sites.push(c);
+    c.tags.forEach((t) => (tagCounts[t] = (tagCounts[t] || 0) + 1));
+  }
 
   const interests = Object.entries(tagCounts)
     .sort((a, b) => b[1] - a[1])
