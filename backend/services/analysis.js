@@ -12,7 +12,8 @@ let _client;
 function client() {
   if (!_client) {
     if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not set');
-    _client = new Anthropic();
+    // Extra retries so transient overloads (429/529) are handled silently.
+    _client = new Anthropic({ maxRetries: 5 });
   }
   return _client;
 }
@@ -106,14 +107,25 @@ async function analyze({ handle, profile = null, posts }) {
     return { handle, summary: '', interests: [], stances: [], note: 'No content to analyze.' };
   }
 
-  const response = await client().messages.create({
-    model: MODEL,
-    max_tokens: 4000,
-    system: SYSTEM,
-    thinking: { type: 'adaptive' },
-    output_config: { format: { type: 'json_schema', schema: SCHEMA } },
-    messages: [{ role: 'user', content: buildUserContent({ handle, profile, posts }) }],
-  });
+  let response;
+  try {
+    response = await client().messages.create({
+      model: MODEL,
+      max_tokens: 4000,
+      system: SYSTEM,
+      thinking: { type: 'adaptive' },
+      output_config: { format: { type: 'json_schema', schema: SCHEMA } },
+      messages: [{ role: 'user', content: buildUserContent({ handle, profile, posts }) }],
+    });
+  } catch (err) {
+    // Map transient/over-capacity errors to a clean, user-friendly message.
+    if (err.status === 529 || err.status === 429 || err.status >= 500) {
+      const e = new Error('The analysis engine is busy right now. Please try again in a few seconds.');
+      e.status = 503;
+      throw e;
+    }
+    throw err;
+  }
 
   if (response.stop_reason === 'refusal') {
     const err = new Error('Analysis was declined by the safety system for this content.');
