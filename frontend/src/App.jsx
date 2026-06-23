@@ -5,6 +5,7 @@ import StanceCard from './components/StanceCard';
 import EmailLookup from './components/EmailLookup';
 import SocialAnalyzer from './components/SocialAnalyzer';
 import Home from './components/Home';
+import Elapsed from './components/Elapsed';
 
 const STEP = { IDLE: 'idle', DISCOVER: 'discover', COLLECT: 'collect', ANALYZE: 'analyze' };
 
@@ -219,9 +220,19 @@ export default function App() {
               )}
 
               {(busy === STEP.COLLECT || busy === STEP.ANALYZE) && (
-                <div className="mt-8 flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
-                  <Loader2 className="h-4 w-4 animate-spin text-accent" />
-                  {busy === STEP.COLLECT ? 'ACQUIRING PUBLIC POSTS…' : 'ANALYZING INTERESTS & STANCES…'}
+                <div className="mt-8 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-3">
+                      <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                      {busy === STEP.COLLECT ? 'ACQUIRING PUBLIC POSTS…' : 'ANALYZING INTERESTS & STANCES…'}
+                    </span>
+                    <span className="text-accent">
+                      <Elapsed />
+                    </span>
+                  </div>
+                  <div className="mt-2 text-[11px] text-slate-600">
+                    Working — this can take 30–90s for large profiles. Please don&apos;t refresh.
+                  </div>
                 </div>
               )}
 

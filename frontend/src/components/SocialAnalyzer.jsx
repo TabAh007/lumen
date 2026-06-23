@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Radar, Loader2, ShieldAlert, ExternalLink } from 'lucide-react';
 import * as api from '../api';
+import Elapsed from './Elapsed';
 
 function rateColor(rate) {
   if (rate >= 90) return 'text-emerald-300';
@@ -69,9 +70,17 @@ export default function SocialAnalyzer() {
       )}
 
       {busy && (
-        <div className="mt-8 flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
-          <Loader2 className="h-4 w-4 animate-spin text-accent" />
-          DETECTING PROFILES AND RATING CONFIDENCE…
+        <div className="mt-8 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-3">
+              <Loader2 className="h-4 w-4 animate-spin text-accent" />
+              DETECTING PROFILES AND RATING CONFIDENCE…
+            </span>
+            <span className="text-accent">
+              <Elapsed />
+            </span>
+          </div>
+          <div className="mt-2 text-[11px] text-slate-600">Working — this can take 30–60s. Please don&apos;t refresh.</div>
         </div>
       )}
 

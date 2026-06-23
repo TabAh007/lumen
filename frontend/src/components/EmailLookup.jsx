@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Loader2, ShieldAlert, CheckCircle2, KeyRound, Phone } from 'lucide-react';
 import * as api from '../api';
+import Elapsed from './Elapsed';
 
 export default function EmailLookup() {
   const [email, setEmail] = useState('');
@@ -58,9 +59,17 @@ export default function EmailLookup() {
       )}
 
       {busy && (
-        <div className="mt-8 flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
-          <Loader2 className="h-4 w-4 animate-spin text-accent" />
-          PROBING ~120 SITES FOR REGISTERED ACCOUNTS…
+        <div className="mt-8 border border-white/10 bg-white/[0.02] p-4 font-mono text-xs text-slate-400">
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-3">
+              <Loader2 className="h-4 w-4 animate-spin text-accent" />
+              PROBING ~120 SITES FOR REGISTERED ACCOUNTS…
+            </span>
+            <span className="text-accent">
+              <Elapsed />
+            </span>
+          </div>
+          <div className="mt-2 text-[11px] text-slate-600">Working — this can take 20–40s. Please don&apos;t refresh.</div>
         </div>
       )}
 
