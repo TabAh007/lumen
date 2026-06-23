@@ -8,6 +8,10 @@ const Anthropic = require('@anthropic-ai/sdk');
 
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
 
+// Adaptive thinking is only supported on Opus 4.6+/Sonnet 4.6/Fable 5 — not on
+// Haiku or older models. Send the param only when the model supports it.
+const SUPPORTS_ADAPTIVE = /opus-4-(6|7|8)|sonnet-4-6|fable-5|mythos-5/.test(MODEL);
+
 let _client;
 function client() {
   if (!_client) {
@@ -109,14 +113,15 @@ async function analyze({ handle, profile = null, posts }) {
 
   let response;
   try {
-    response = await client().messages.create({
+    const request = {
       model: MODEL,
       max_tokens: 4000,
       system: SYSTEM,
-      thinking: { type: 'adaptive' },
       output_config: { format: { type: 'json_schema', schema: SCHEMA } },
       messages: [{ role: 'user', content: buildUserContent({ handle, profile, posts }) }],
-    });
+    };
+    if (SUPPORTS_ADAPTIVE) request.thinking = { type: 'adaptive' };
+    response = await client().messages.create(request);
   } catch (err) {
     // Map transient/over-capacity errors to a clean, user-friendly message.
     if (err.status === 529 || err.status === 429 || err.status >= 500) {
