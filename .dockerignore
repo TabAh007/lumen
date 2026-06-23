@@ -1,0 +1,7 @@
+**/node_modules
+maigret-venv
+frontend
+.git
+*.log
+backend/.env
+backend/uploads

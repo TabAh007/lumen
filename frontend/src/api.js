@@ -1,7 +1,13 @@
 import axios from 'axios';
 
-// Requests are proxied to the backend (see vite.config.js).
-const api = axios.create({ baseURL: '/api', timeout: 180000 });
+// In production, set VITE_API_URL to the backend's base URL (e.g.
+// https://lumen-backend.onrender.com). Locally it's unset, so requests go to
+// "/api" and Vite proxies them to the backend (see vite.config.js).
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
+  : '/api';
+
+const api = axios.create({ baseURL: API_BASE, timeout: 180000 });
 
 export const discover = (handle) => api.post('/discover', { handle }).then((r) => r.data);
 export const collect = (platform, handle) =>
