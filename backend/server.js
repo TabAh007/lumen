@@ -25,5 +25,6 @@ const PORT = process.env.PORT || 5000;
 
 (async () => {
   await connectDB();
-  app.listen(PORT, () => console.log(`[server] running on http://localhost:${PORT}`));
+  // Bind to 0.0.0.0 so cloud hosts (Render, etc.) can reach the port.
+  app.listen(PORT, '0.0.0.0', () => console.log(`[server] running on port ${PORT}`));
 })();
